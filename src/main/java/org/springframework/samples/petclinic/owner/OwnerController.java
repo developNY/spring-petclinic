@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import org.hsqldb.lib.StringUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -76,14 +78,14 @@ class OwnerController {
 
     @GetMapping("/owners")
     public String processFindForm(Owner owner, BindingResult result, Map<String, Object> model) {
-
-        // allow parameterless GET request for /owners to return all records
-        if (owner.getLastName() == null) {
-            owner.setLastName(""); // empty string signifies broadest possible search
-        }
-
+        Collection<Owner> results = null;
+        
         // find owners by last name
-        Collection<Owner> results = this.owners.findByLastName(owner.getLastName());
+        if(!StringUtil.isEmpty(owner.getLastName()))
+        	results = this.owners.findByLastName(owner.getLastName());
+        else if(!StringUtil.isEmpty(owner.getFirstName()))
+        	results = this.owners.findByFirstName(owner.getFirstName());
+        
         if (results.isEmpty()) {
             // no owners found
             result.rejectValue("lastName", "notFound", "not found");
