@@ -15,7 +15,13 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.util.Collection;
+import java.util.Map;
+
+import javax.validation.Valid;
+
 import org.hsqldb.lib.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,11 +31,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.validation.Valid;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * @author Juergen Hoeller
@@ -41,11 +42,27 @@ import java.util.Map;
 class OwnerController {
 
     private static final String VIEWS_OWNER_CREATE_OR_UPDATE_FORM = "owners/createOrUpdateOwnerForm";
+    //new로 직접 생성하지 않는다. 누군가가 대신해서 생성해서 넣어준다.
     private final OwnerRepository owners;
+    private PetRepository petRepo1;
+    private final PetRepository petRepo2;
+    
+    
+    @Autowired
+    public void setRepository(PetRepository petRepo) {
+		this.petRepo1 = petRepo;
+	}
+    
+    //bean 객체 주입 방법 2 
+    @Autowired
+    PetRepository petRepo;
 
-
-    public OwnerController(OwnerRepository clinicService) {
+    //생성자를 통한 dependency 주입. 주입해주는 것은 IoC 컨테이너가 해줌.
+    //생성되어 빈 객체로 등록될떄 넣어주기 때문에 clinicService를 사용하는 모든 코드는 null exception에 대한 안정성을 보장받는다.
+    //bean 객체 주입방법3
+    public OwnerController(OwnerRepository clinicService, PetRepository petRepo) {
         this.owners = clinicService;
+        this.petRepo2 = petRepo;
     }
 
     @InitBinder
