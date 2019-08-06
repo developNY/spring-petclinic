@@ -37,6 +37,7 @@ class VetController {
     }
 
     @GetMapping("/vets.html")
+    @MakeAnnotationTest
     public String showVetList(Map<String, Object> model) {
         // Here we are returning an object of type 'Vets' rather than a collection of Vet
         // objects so it is simpler for Object-Xml mapping
@@ -47,6 +48,7 @@ class VetController {
     }
 
     @GetMapping({ "/vets" })
+    @MakeAnnotationTest
     public @ResponseBody Vets showResourcesVetList() {
         // Here we are returning an object of type 'Vets' rather than a collection of Vet
         // objects so it is simpler for JSon/Object mapping
